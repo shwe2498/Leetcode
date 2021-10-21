@@ -1,0 +1,60 @@
+/*
+1228. Missing Number In Arithmetic Progression
+
+In some array arr, the values were in arithmetic progression: the values arr[i + 1] - arr[i] are all equal for every 0 <= i < arr.length - 1.
+
+A value from arr was removed that was not the first or last value in the array.
+
+Given arr, return the removed value.
+
+Input: arr = [5,7,11,13]
+Output: 9
+Explanation: The previous array was [5,7,9,11,13].
+
+Input: arr = [15,13,12]
+Output: 14
+Explanation: The previous array was [15,14,13,12].
+*/
+
+int missingNumber(vector<int>& arr) {
+        sort(arr.begin(), arr.end());
+        int n = arr.size();
+        int diff = abs(arr[arr.size() - 1] - arr[0]) / arr.size();
+        int missing = arr[0];
+        
+        //AP TC: O(nlogn) SC :O(1)
+        int total = 0;
+        for(auto a : arr){
+            total += a;
+        }
+        
+        int exp_len = n + 1;
+        int cal1 = (exp_len - 1) * diff;
+        int cal2 = 2 * arr[0];
+        int cal3 = cal1 + cal2;
+        int cal4 = exp_len * cal3;
+        int ap = cal4 / 2;
+        
+        missing = ap - total;
+        
+        //Linear search TC : O(n) SC : O(1)
+        for(auto a : arr){
+            if(a != missing) return missing;
+            missing += diff;
+        }
+        
+        //Binary Search TC : O(logn) SC : O(1)
+        int low = 0;
+        int high = n - 1;
+        while(low < high){
+            int mid = (low + high) / 2;
+            if(arr[mid] == arr[0] + mid * diff){
+                low = mid + 1;
+            }
+            else{
+                high = mid;
+            }
+        }
+        missing = arr[0] + diff * low;
+        return missing;
+    }
