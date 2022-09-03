@@ -1,0 +1,63 @@
+967. Numbers With Same Consecutive Differences
+Return all non-negative integers of length n such that the absolute difference between every two consecutive digits is k.
+
+Note that every number in the answer must not have leading zeros. For example, 01 has one leading zero and is invalid.
+
+You may return the answer in any order.
+
+Example 1:
+Input: n = 3, k = 7
+Output: [181,292,707,818,929]
+Explanation: Note that 070 is not a valid number, because it has leading zeroes.
+
+Example 2:
+Input: n = 2, k = 1
+Output: [10,12,21,23,32,34,43,45,54,56,65,67,76,78,87,89,98]
+
+class Solution {
+    void DFS(int n, int num, int k, vector<int>& results){
+        if(n == 0){
+            results.push_back(num);
+            return;
+        }
+        
+        vector<int> nextDigits;
+        int tailDigit = num % 10;
+        nextDigits.push_back(tailDigit + k);
+        if(k != 0)
+            nextDigits.push_back(tailDigit - k);
+        
+        for(auto nextDigit : nextDigits){
+            if(0 <= nextDigit && nextDigit < 10){
+                int newNum = num * 10 + nextDigit;
+                DFS(n - 1, newNum, k, results);
+            }
+        }
+    }
+public:
+    vector<int> numsSameConsecDiff(int n, int k) {
+        //DFS
+        
+        if(n == 1) return {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        
+        /*vector<int> results;
+        for(int num = 1; num < 10; ++num)
+            DFS(n - 1, num, k, results);
+        sort(results.begin(), results.end());*/
+        
+        //BFS
+        vector<int> results = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+        for (int i = 2; i <= n; ++i) {
+            vector<int> nextDigits;
+            for (int num : results) {
+                int tailDigit = num % 10;
+                if (tailDigit + k < 10)
+                    nextDigits.push_back(num * 10 + tailDigit + k);
+                if (k > 0 && tailDigit - k >= 0)
+                    nextDigits.push_back(num* 10 + tailDigit - k);
+            }
+            results = nextDigits;
+        }
+        return results;
+    }
+};
